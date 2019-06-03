@@ -1,0 +1,100 @@
+﻿<html>
+
+<head>
+<meta content="ko" http-equiv="Content-Language" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<script src="./SocketClient.js"></script>
+<script src="./TokenMgmt.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link href="main.css" rel="stylesheet">
+<title>Token Management</title>
+
+</head>
+
+<body>
+
+<p><h1>User Management</h1></p>
+
+<div class="item item-a">
+	<!--select id ="ID-Network" name="TokenNet">
+		<option value="MAINNET">Mainnet</option>
+		<option value="ROPSTEN" selected="selected">Ropsten</option>
+		<option value="PRIVATE">Private</option>
+	</select>&nbsp;
+	-->
+	<h3 onclick='location.href="token_admin.html"'> Token Control </h3>
+	<!--li onclick='MgmtMenu("TOKENINFO");'>SECRET Token info</a></li> <br>
+	<li onclick='MgmtMenu("SECRET");'>SECRET Token control</li> <br>
+	<li onclick='MgmtMenu("Ethereum");'>Ethereum coin control</li> <br-->
+	<h3>User Control </h3>
+	<li onclick="DBList();">list User</li> <br>
+	<li>search User</li> <br>
+
+</div>
+
+<div id="ID-DIV-USERList"  class="item item-b" style="display:block">
+	<h2>SECRET Wallet User List</h2> <br>
+	<label id="ID-DATAResult">DB Result</label><BR>
+</div>
+
+<div id="ID-DIV-SECRET" 	class="item item-b" style="display:none">
+	<h2> SECRET Token Control </h2><br>
+	<input type="radio" name="Token" id="SECRET-rBalance" value="Balance" checked="checked" onclick='Token_show_div("Balance");' />Balance&nbsp;
+	<input type="radio" name="Token" id="SECRET-rTokenTx" value="TokenTx" onclick='Token_show_div("TokenTx");'/>Transfer
+	<br><br>
+	<div id="ID-SECRET-Balance"  style="display:block">
+			<input name="Button1" type="button" value="Get Balance" class="buttonB" onClick="SecretBalance();" /> <br>
+			<div class="block_title"><li>Address: 	</div><input id="ID-Balance_address" name="Address" type="text" class="block_text" /></li><br>
+			<div class="block_title"><li>Result:	</div><input id="ID-Balance_result" name="result" type="text" class="block_text"/></li><br>
+			<div class="block_title"><li>Message: 	</div><input id="ID-Balance_msg" name="msg" type="text" class="block_text"/></li><br>
+	</div>
+
+	<div id="ID-SECRET-TokenTx"  style="display:none">
+			<select id="ID-txType" name="txType">
+			<option value="PRIVATEKEY" selected="selected">from Privatkey</option>
+			<!--option value="KEYSTORE">from KeyStore</option-->
+			</select> &nbsp;&nbsp;&nbsp;	
+		<input name="Button1" type="button" value="Send" class="buttonB" onClick="SecretSend();"/> <br>
+			<div class="block_title"><li>From Pkey  : </div><input id="ID-tx_from" name="Address" type="text" class="block_text" /></li><br>
+			<div class="block_title"><li>To     	: </div><input id="ID-tx_to" name="to_addr" type="text" class="block_text"/></li><br>
+		    <div class="block_title"><li>Value  	: </div><input id="ID-tx_value" name="result" type="text" class="block_text"/></li><br>
+			<div class="block_title"><li>Result 	: </div><input id="ID-tx_result" name="result" type="text" class="block_text"/></li><br>
+			<div class="block_title"><li>Message	: </div><input id="ID-tx_msg" name="msg" type="text" class="block_text"/></li><br>
+	</div>
+
+<div id="ID-DIV-ETHEREUM" 	class="item item-b" style="display:none">
+	<h2> Ethereum coin Control </h2> <br>
+	<input name="Token" type="radio" ID="ETHER-rBalance" value="Balance" checked="checked" onclick='ETHER_show_div();' />Balance&nbsp;
+	<input name="Token" type="radio" ID="ETHER-rTokenTx" value="TokenTx" onclick='ETHER_show_div();'/>Transfer
+	<br><br>
+	<div id="ID-ETHER-Balance" style="display:block">
+		<input name="Button1" type="button" value="Get Balance" class="buttonB" onClick="EtherBalance();" /><br>
+		<div class="block_title"><li>Address: 	</div><input id="ID-ETHER_Balance_address" name="Address" type="text" class="block_text" /></li>  <br>
+		<div class="block_title"><li>Result: 	</div><input id="ID-ETHER_Balance_result" id="ID-Balance_result" name="result" type="text" class="block_text"/></li><br>
+		<div class="block_title"><li>Message: 	</div><input id="ID-ETHER_Balance_msg" name="msg" type="text" class="block_text"/></li><br>
+	</div>
+
+	<div id="ID-ETHER-TokenTx" style="display:none">
+		<select id="ID-ETHER_txType" name="txType">
+		<option value="PRIVATEKEY" selected="selected">from Privatkey</option>
+		<option value="KEYSTORE">from KeyStore</option>
+		</select> &nbsp;&nbsp;&nbsp;	
+		<input name="Button1" type="button" value="Send" class="buttonB" onClick="EtherSend();"/><br>
+		<div class="block_title"><li>From Pkey:	</div><input id="ID-ETHER_tx_from" name="Address" type="text" class="block_text" /></li><br>
+		<div class="block_title"><li>To 	  :	</div><input id="ID-ETHER_tx_to" name="to_addr" type="text" class="block_text"/></li><br>
+		<div class="block_title"><li>Value    :	</div><input id="ID-ETHER_tx_value" name="result" type="text" class="block_text"/></li><br>
+		<div class="block_title"><li>Result   :	</div><input id="ID-ETHER_tx_result" name="result" type="text" class="block_text"/></li><br>
+		<div class="block_title"><li>Message  :	</div><input id="ID-ETHER_tx_msg" name="msg" type="text" class="block_text"/></li><br>
+	</div>
+</div>
+<div id="ID-DIV-TXRESULT" class="item item-c">
+	<li><label id="L_TXMSG">Transaction Result</label></li><BR>
+	<textarea id="ID-TxResult" cols=110 rows=11  style="white-space:pre;"></textarea>
+	<a href=""></a>
+</div>
+</body>
+<script> 
+
+</script>
+
+</html>

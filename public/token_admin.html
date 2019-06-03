@@ -1,0 +1,290 @@
+﻿<html>
+
+<head>
+<meta content="ko" http-equiv="Content-Language" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="./TokenClient-jquery.js"></script>
+<script src="./TokenMgmt-jquery.js"></script>
+<link href="main.css" rel="stylesheet">
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="jquery.bpopup.min.js"></script>
+
+<title>Token Management</title>
+
+</head>
+
+<body onLoad='Send2Server("GET-TOKEN-HOLDER");'>
+
+<p><h1>Token Management</h1></p>
+
+<div class="item item-a">
+	<!--select id ="ID-Network" name="TokenNet">
+		<option value="MAINNET">Mainnet</option>
+		<option value="ROPSTEN" selected="selected">Ropsten</option>
+		<option value="PRIVATE">Private</option>
+	</select>&nbsp;
+	-->
+	<h3> Token Control </h3>
+	<li onclick='MgmtMenu("SECRET");'>SECRET Control</li> <br>
+	<li onclick='MgmtMenu("Ethereum");'>Ethereum Control</li> <br>
+	<li onclick='MgmtMenu("TOKENINFO");'>SECRET Info</a></li> <br>
+	<!--h3 onclick='location.href="user_admin.html"'> User Control </h3>
+	<li onclick='location.href="user_admin.html"'>Wallet User mgmt.</li> <br-->
+
+	<!--select id ="ID-Token" name="Token" onchange="changeToken()">
+	<option selected="selected" value="SECRET">SECRET</option>
+	<option value="Ethereum">Ethereum</option>
+	</select>&nbsp;
+	<input name="Button1" type="button" value="Get Token Info" class="buttonA" onClick="SelectNetwork();"/>
+	<br/-->
+</div>
+
+<div id="ID-DIV-TOKENINFO"  class="item item-b" style="display:none">
+	<h2>SECRET Token Info</h2> <hr><br>
+	<li><label class="block_label" id="L_NETID"></label></li>
+	<li><label class="block_label" id="L_NAME"></label></li>
+	<li><label id="L_SYMBOL"></label></li>
+	<li><label id="L_DECIMALS"></label></li>
+	<li><label id="L_TOTAL"></label></li>
+	<li><label id="L_STATUS"></label></li>
+	<li><label id="L_TOKEN_ADDR"></label></li>
+	<li><label id="L_TOKEN_OWNER"></label></li>
+	<br>
+	<div style="width: 70%; display: flex; justify-content: space-between;">
+		<li><b>Token Holder List</b></li> 
+		<input name="Button1" type="button" id="ID-GET-USER-LIST" value="get Balance List from Ethereum" class="buttonB" onClick='get_user_balance();' style="float: right"/>
+	</div>
+	
+	<table id="ID-HolderList-TABLE" class="type10" with=100%> 
+		<thead><tr align=center>
+			<th scope="cols" width=20%>이름</th>
+			<th scope="cols" width=40%>주소</th>
+			<!--th scope="cols"  >개인키</th-->
+			<th scope="cols" width=20% >초기할당액</th>
+
+		</tr></thead>
+		<tbody id="ID-HolderList-TBODY"></tbody>
+	</table>
+</div>
+
+<div id="ID-DIV-SECRET" 	class="item item-b" style="display:inline-block">
+	<h2> SECRET Token Control </h2> <hr><br>
+	<input type="radio" name="Token" id="SECRET-rBalance" value="Balance" checked="checked" onclick='Token_show_div("Balance");' />Balance&nbsp;
+	<input type="radio" name="Token" id="SECRET-rTokenTx" value="TokenTx" onclick='Token_show_div("TokenTx");'/>Transfer
+	<input type="radio" name="Token" id="SECRET-rWhitelist" value="Whitelist" onclick='Token_show_div("WhiteList");' />Whitelist 
+	<input type="radio" name="Token" id="SECRET-rTokenLock" value="TokenLock" onclick='Token_show_div("TokenLock");'/>(un)Lock
+	<br><br>
+	<div id="ID-SECRET-Balance"  style="display:block">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Get Balance" class="buttonB" onClick='$("#ID-Balance_result").val("");$("#ID-Balance_msg").val("");Send2Server("SECRET-BALANCE");' /> 
+			<select ID="ID-TokenHolder_S_B" onchange="TockenHolderEvent_S_B(this);">
+					<option value=""> Custom</option>
+			</select>
+		</div>
+		<div class="block_title"><li>Address: 	</li></div><input id="ID-Balance_address" name="Address" type="text" class="block_text" /><br>
+		<div class="block_title"><li>Result:	</li></div><input id="ID-Balance_result" name="result" type="text" class="block_text"/><br>
+		<div class="block_title"><li>Message: 	</li></div><input id="ID-Balance_msg" name="msg" type="text" class="block_text"/><br>
+	</div>
+
+	<div id="ID-SECRET-TokenTx"  style="display:none">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Send" class="buttonB" onClick='$("#ID-tx_result").val("");$("#ID-tx_msg").val("");Send2Server("SECRET-TRANSFER");'/>
+			<select id="ID-txType" name="txType">
+				<option value="PRIVATEKEY" selected="selected">from Privatkey</option>
+				<!--option value="KEYSTORE">from KeyStore</option-->
+			</select>
+			<select ID="ID-TokenHolder_S_T" onchange="TockenHolderEvent_S_T(this);">
+					<option value=""> Custom</option>
+			</select>
+		</div>
+
+		<div class="block_title"><li>From Pkey  : </li></div><input id="ID-tx_from" name="Address" type="text" class="block_text" /><br>
+		<div class="block_title"><li>To     	: </li></div><input id="ID-tx_to" name="to_addr" type="text" class="block_text"/><br>
+		<div class="block_title"><li>Value  	: </li></div><input id="ID-tx_value" name="result" type="text" class="block_text"/><li id="ID-User-Balance-S"></li><br>
+		<div class="block_title"><li>Result 	: </li></div><input id="ID-tx_result" name="result" type="text" class="block_text"/>&nbsp;<a href="#" id="ID-ETHER-TX-showtext" onclick='view_popup($("#ID-tx_result").val())'>확인</a><br>
+		<div class="block_title"><li>Message	: </li></div><input id="ID-tx_msg" name="msg" type="text" class="block_text"/><br>
+	</div>
+
+	<div id="ID-SECRET-WhiteList"  style="display:none">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Confirm" class="buttonB" onClick='$("#ID-WhiteList_result").val("");$("#ID-WhiteList_msg").val("");Send2Server($("#ID-WhiteList option:selected" ).val());' />
+			<select id="ID-WhiteList" name="Whitelist" onchange="WhiteListEvent(this);">
+				<option value="SECRET-WL-CHECK" selected="selected">Check </option>
+				<option value="SECRET-WL-ADD">Add </option>
+				<option value="SECRET-WL-REMOVE">Remove </option>
+			</select>
+			<select ID="ID-TokenHolder_S_W" onchange="TockenHolderEvent_S_W(this);">
+					<option value=""> Custom</option>
+			</select>
+		</div>
+
+		<div class="block_title"><li>Address: 	</li></div><input id="ID-WhiteList_address" name="Address" type="text" class="block_text" /><br>
+		<div class="block_title"><li>Result:	</li></div><input id="ID-WhiteList_result" name="result" type="text" class="block_text"/>&nbsp;<a href="#" id="ID-WhiteList-showtext" onclick='view_popup($("#ID-WhiteList_result").val())'></a><br>
+		<div class="block_title"><li>Message: 	</li></div><input id="ID-WhiteList_msg" name="msg" type="text" class="block_text"/><br>
+	</div>
+
+	<div id="ID-SECRET-TokenLock"  style="display:none">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Confirm" class="buttonB" onClick='$("#ID-TokenLock_result").val("");$("#ID-TokenLock_msg").val("");Send2Server($("#ID-TokenLock option:selected" ).val());' />
+			<select ID="ID-TokenLock" name="LOCK" onchange="TockenLockEvent(this);">
+				<option value="SECRET-TOKEN-STATUS" selected="selected">Token Status</option>
+				<option value="SECRET-TOKEN-LOCK">Lock Token</option>
+				<option value="SECRET-TOKEN-UNLOCK" >Unlock Token</option>
+			</select>
+		</div>
+		
+		<div class="block_title"><li>Result:	</li></div><input id="ID-TokenLock_result" name="result" type="text" class="block_text"/>&nbsp;<a href="#" id="ID-TokenLock-showtext" onclick='view_popup($("#ID-TokenLock_result").val())'></a><br>
+		<div class="block_title"><li>Message:	</li></div><input id="ID-TokenLock_msg" name="msg" type="text" class="block_text"/><br>
+	</div>
+</div>
+
+<div id="ID-DIV-ETHEREUM" 	class="item item-b" style="display:none">
+	<h2> Ethereum coin Control </h2> <hr><br>
+	<input name="ETHER" type="radio" ID="ETHER-rBalance" value="Balance" checked="checked" onclick='ETHER_show_div("Balance");' />Balance&nbsp;
+	<input name="ETHER" type="radio" ID="ETHER-rTokenTx" value="TokenTx" onclick='ETHER_show_div("TokenTx");'/>Transfer
+	<br><br>
+	<div id="ID-ETHER-Balance" style="display:inline-block">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Get Balance" class="buttonB" onClick='$("#ID-ETHER_Balance_result").val("");$("#ID-ETHER_Balance_msg").val("");Send2Server("ETHER-BALANCE");' />
+			<select ID="ID-TokenHolder_E_B" onchange="TockenHolderEvent_E_B(this);">
+				<option value=""> Custom</option>
+			</select>
+		</div>
+
+		<div class="block_title"><li>Address: 	</li></div><input id="ID-ETHER_Balance_address" name="Address" type="text" class="block_text" /><br>
+		<div class="block_title"><li>Result: 	</li></div><input id="ID-ETHER_Balance_result" id="ID-Balance_result" name="result" type="text" class="block_text"/><br>
+		<div class="block_title"><li>Message: 	</li></div><input id="ID-ETHER_Balance_msg" name="msg" type="text" class="block_text"/>
+	</div>
+
+	<div id="ID-ETHER-TokenTx" style="display:none">
+		<div style="width: 720px; display: flex;	justify-content: space-between;">
+			<input name="Button1" type="button" value="Send" class="buttonB" onClick='$("#ID-ETHER_tx_result").val("");$("#ID-ETHER_tx_msg").val("");Send2Server("ETHER-TRANSFER");'/> &nbsp;&nbsp;&nbsp;
+			<select id="ID-ETHER_txType" name="txType">
+				<option value="PRIVATEKEY" selected="selected">from Privatkey</option>
+				<!--option value="KEYSTORE">from KeyStore</option-->
+			</select> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+			<select ID="ID-TokenHolder_E_T" onchange="TockenHolderEvent_E_T(this);">
+					<option value=""> Custom</option>
+			</select>
+		</div>
+	
+		<div class="block_title"><li>From Pkey:	</li></div><input id="ID-ETHER_tx_from" name="Address" type="text" class="block_text" /><br>
+		<div class="block_title"><li>To 	  :	</li></div><input id="ID-ETHER_tx_to" name="to_addr" type="text" class="block_text"/><br>
+		<div class="block_title"><li>Value    :	</li></div><input id="ID-ETHER_tx_value" name="result" type="text" class="block_text"/><li id="ID-User-Balance-E"></li><br><br>
+		<div class="block_title"><li>Result   :	</li></div><input id="ID-ETHER_tx_result" name="result" type="text" class="block_text"/>&nbsp;<a href="#" id="ID-ETHER-TX-showtext" onclick='view_popup($("#ID-ETHER_tx_result").val())'>확인</a><br>
+		<div class="block_title"><li>Message  :	</li></div><input id="ID-ETHER_tx_msg" name="msg" type="text" class="block_text"/><br>
+	</div>
+</div>
+<!--div id="ID-DIV-TXRESULT" class="item item-c">
+	<li><label id="L_TXMSG">Transaction Result</label></li><BR>
+	<textarea id="ID-TxResult" cols=110 rows=11  style="white-space:pre;"></textarea>
+	<a href=""></a>
+</div-->
+<!-- ///Layered Popup -->
+<div id="popup_result" class="item Pstyle">
+	<span class="b-close">X</span>
+	<div id="ID-DIV-TXRESULT">
+		<li><label id="L_TXMSG">Transaction Result</label></li>
+		<hr>
+		<textarea id="ID-TxResult" class ="item" cols=100 rows=11  style="white-space:pre;border:0;resize: none"></textarea>
+		<a href=""></a>
+	</div>
+		<!--div class="content2" style="height:auto; width:260px;"--> 
+	<div class="btn-r">
+		<a href="#" class ="btn-close" onclick='close_popup();'>Close</a> 
+	</div>
+</div>
+
+</body>
+<script>
+var repeat;
+//Layered Popup
+function view_popup(txt){
+	if(txt.substr(0,2) !== '0x') {
+		alert("invalid txHash format!!!");
+	}
+	else
+	{
+		
+		$('#L_TXMSG').html(`Transaction Result`);
+		$('#ID-TxResult').val("");	// initialize
+		$("#popup_result").bPopup(); 
+		//$('#ID-TxResult').val(txt);
+		Send2Server("TX-RESULT",txt);
+		//console.log("Label2: ", $('#L_TXMSG').text().length);
+	
+    	repeat = setInterval(function(){
+			Send2Server("TX-RESULT",txt);
+			if( $('#L_TXMSG').text().length > 20){
+				clearInterval(repeat);
+				// txt = "completed";
+				// $('#ID-TxResult').val(txt);
+			}
+		},3000);
+
+	}
+}
+
+function close_popup(){
+	clearInterval(repeat);
+	$("#popup_result").bPopup().close(); 
+}
+
+function TockenLockEvent(obj){
+	if(obj.value !== 'SECRET-TOKEN-STATUS') {
+//		alert("not status");
+		$("#ID-TokenLock-showtext").text("확인");
+	}
+	else
+	{
+//		alert("status!!!!");
+		$("#ID-TokenLock-showtext").text("");
+	}
+}
+function WhiteListEvent(obj){
+	if(obj.value !== 'SECRET-WL-CHECK') {
+//		alert("not status");
+		$("#ID-WhiteList-showtext").text("확인");
+	}
+	else
+	{
+//		alert("status!!!!");
+		$("#ID-WhiteList-showtext").text("");
+	}
+}
+
+function TockenHolderEvent_E_B(obj){
+	$("#ID-ETHER_Balance_address").val(obj.value);
+	$("#ID-ETHER_Balance_result").val("");$("#ID-ETHER_Balance_msg").val("");Send2Server("ETHER-BALANCE");
+}
+function TockenHolderEvent_E_T(obj){
+	$("#ID-ETHER_tx_from").val(obj.value);
+	$("#ID-User-Balance-E").html("");
+	Send2Server("USER-BALANCE-E");
+	//$("#ID-User-Balance-E").text("1111222");
+}
+function TockenHolderEvent_S_B(obj){
+	$("#ID-Balance_address").val(obj.value);
+	$("#ID-Balance_result").val("");$("#ID-Balance_msg").val("");Send2Server("SECRET-BALANCE");
+}
+function TockenHolderEvent_S_T(obj){
+	$("#ID-tx_from").val(obj.value);
+	$("#ID-User-Balance-S").html("");
+	Send2Server("USER-BALANCE-S");
+	//$("#ID-User-Balance-S").html("Remained Balance: ETHER: 111, SECRET: 2222");
+}
+function TockenHolderEvent_S_W(obj){
+	$("#ID-WhiteList_address").val(obj.value);
+//	$("#ID-WhiteList_result").val("");$("#ID-WhiteList_msg").val("");Send2Server($("#ID-WhiteList option:selected" ).val());
+	$("#ID-WhiteList_result").val("");$("#ID-WhiteList_msg").val("");Send2Server("SECRET-WL-CHECK");
+}
+
+
+
+</script>
+
+</html>
