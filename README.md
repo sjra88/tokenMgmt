@@ -7,6 +7,7 @@ It will be upgrade to v1.x.
 Manaing Address should be added in DB.(to be developed)
 
 This is db schema.
+
 CREATE TABLE `tokenholder` (
   `disp_order` int(10) unsigned DEFAULT 99,
   `Network` int(10) unsigned NOT NULL,
