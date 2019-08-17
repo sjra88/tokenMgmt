@@ -12,9 +12,11 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
+/* 관리용 js file */
 app.use("/token", require("./route/token-mgmt").router);
 app.use("/db", require("./route/db-mgmt").router);
 
+/* html 관리페이지 */
 app.use("/admin", express.static(__dirname + '/public'));
 //app.use("/user", express.static(__dirname + '/public'));
 
@@ -22,6 +24,7 @@ app.get("/", function(req, res){
     res.send("welcome!!!");
 });
 
+/*  접속 URL: http://localhost:3000/admin */
 app.get("/admin", function(req, res){
     console.log("get:token_admin.html");
     //최초 루트 get 요청에 대해, 서버에 존재하는 html 파일 전송
