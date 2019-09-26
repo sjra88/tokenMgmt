@@ -1,7 +1,7 @@
-This is for internal token management.
+This is for internal token management..
 
 
-web3.js(v0.20.6) is not reliable for me. 
+web3.js(v0.20.6) is not reliable for me.. 
 It will be upgrade to v1.x.
 
 Manaing Address should be added in DB.(to be developed)
